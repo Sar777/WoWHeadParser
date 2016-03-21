@@ -1,0 +1,5 @@
+How To use:
+java -jar file.jar filaname.sql countThread range1 range2
+
+java -jar wowhead.jar items.sql 30 40000 50000
+
