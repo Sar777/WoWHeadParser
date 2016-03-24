@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import Common.ParserType;
 import Managers.LootMgr;
+import Parsers.CreatureLootParser;
 import Parsers.DisenchantLootParser;
 import Parsers.SkiningLootParser;
 
@@ -80,6 +81,10 @@ public class WoWHead {
 			case PARSER_SKINNING_LOOT:
 				for (int i = range1; i <= range2; ++i)
 					executor.submit(new SkiningLootParser(i));
+				break;
+			case PARSER_CREATURE_LOOT:
+				for (int i = range1; i <= range2; ++i)
+					executor.submit(new CreatureLootParser(i));
 				break;
 			default:
 				break;

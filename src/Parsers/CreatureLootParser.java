@@ -4,27 +4,31 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import Loaders.Loader;
-import LootTemplates.ItemLoot;
+import LootTemplates.CreatureLoot;
 import LootTemplates.Loot;
 import LootTemplates.LootTemplate;
 import Managers.LootMgr;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 
-public class DisenchantLootParser implements Runnable {
+public class CreatureLootParser implements Runnable {
 	int entry;
 
-	public DisenchantLootParser(int entry) {
+	public CreatureLootParser(int entry) {
 		super();
 		this.entry = entry;
 	}
 
 	@Override
 	public void run() {
-		System.out.println("DisenchantLootParser: Parse loot for " + entry);
+		System.out.println("CreatureLootParser: Parse loot npc for " + entry);
 		String htmlText = "";
 		try {
-			htmlText = new Loader().LoadHtml(new URL("http://wowhead.com/item=" + entry));
+			htmlText = new Loader().LoadHtml(new URL("http://wowhead.com/npc=" + entry));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -36,9 +40,9 @@ public class DisenchantLootParser implements Runnable {
 		if (titlePos == -1)
 			return;
 		
-		Loot loot = new ItemLoot(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - Item -")));
+		Loot loot = new CreatureLoot(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - NPC -")));
 		
-		int idx = htmlText.indexOf("new Listview({template: 'item', id: 'disenchanting'");
+		int idx = htmlText.indexOf("new Listview({template: 'item', id: 'drops'");
 		if (idx == -1)
 			return;
 		
@@ -58,7 +62,7 @@ public class DisenchantLootParser implements Runnable {
 			JsonParser parser = new JsonParser();
 			items = parser.parse(htmlText).getAsJsonArray();	
 		} catch (JsonSyntaxException e) {
-			System.out.println("DisenchantLootParser: Parsing problem item " + entry);
+			System.out.println("CreatureLootParser: Parsing problem npc " + entry);
 			return;
 		}
 		
@@ -79,7 +83,8 @@ public class DisenchantLootParser implements Runnable {
 		}
 		
 		if (loot.getLoots().size() > 0) {
-			LootMgr.getInstance().getLoot().add(new ItemLoot(loot));
+			LootMgr.getInstance().getLoot().add(new CreatureLoot(loot));
 		}
 	}
+
 }

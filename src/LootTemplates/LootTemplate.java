@@ -38,7 +38,7 @@ public class LootTemplate {
 	@Override
 	public String toString() {
 		return "(" + entry + ", " + item + ", " + reference + ", " 
-				   + chance + ", " + lootmode + ", " + groupid + ", "
+				   + chance + ", " + lootmode + ", 1, " + groupid + ", "
 				   + mincount + ", " + maxcount + ", \"" + comment + "\")";
 	}
 	

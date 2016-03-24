@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import Loaders.Loader;
+import LootTemplates.Loot;
 import LootTemplates.LootTemplate;
 import LootTemplates.SkinningLoot;
 import Managers.LootMgr;
@@ -16,7 +17,6 @@ import com.google.gson.JsonSyntaxException;
 
 public class SkiningLootParser implements Runnable {
 	int entry;
-	SkinningLoot loot;
 
 	public SkiningLootParser(int entry) {
 		super();
@@ -40,7 +40,7 @@ public class SkiningLootParser implements Runnable {
 		if (titlePos == -1)
 			return;
 		
-		this.loot = new SkinningLoot(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - NPC -")));
+		Loot loot = new SkinningLoot(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - NPC -")));
 		
 		int idx = htmlText.indexOf("new Listview({template: 'item', id: 'skinning'");
 		if (idx == -1)
