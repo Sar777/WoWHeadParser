@@ -10,6 +10,7 @@ import Common.ParserType;
 import Managers.LootMgr;
 import Parsers.CreatureLootParser;
 import Parsers.DisenchantLootParser;
+import Parsers.ItemLootParser;
 import Parsers.SkiningLootParser;
 
 public class WoWHead {
@@ -74,7 +75,7 @@ public class WoWHead {
 		
 		ExecutorService executor = Executors.newFixedThreadPool(threadCount);
 		switch (parseType) {
-			case PARSER_ITEM_LOOT:
+			case PARSER_DES_LOOT:
 				for (int i = range1; i <= range2; ++i)
 					executor.submit(new DisenchantLootParser(i));
 				break;
@@ -85,6 +86,10 @@ public class WoWHead {
 			case PARSER_CREATURE_LOOT:
 				for (int i = range1; i <= range2; ++i)
 					executor.submit(new CreatureLootParser(i));
+				break;
+			case PARSER_ITEM_LOOT:
+				for (int i = range1; i <= range2; ++i)
+					executor.submit(new ItemLootParser(i));
 				break;
 			default:
 				break;

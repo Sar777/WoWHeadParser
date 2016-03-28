@@ -1,5 +1,4 @@
 How To use:
-java -jar file.jar filaname.sql countThread range1 range2
+java -jar file.jar [parserType] filaname.sql countThread range1 range2
 
-java -jar wowhead.jar items.sql 30 40000 50000
-
+java -jar wowhead.jar 0 items.sql 30 40000 50000
