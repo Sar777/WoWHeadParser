@@ -7,10 +7,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import Common.ParserType;
-import Managers.LootMgr;
+import Managers.ParseDataMgr;
+import Parsers.CreatesItemParser;
 import Parsers.CreatureLootParser;
 import Parsers.DisenchantLootParser;
 import Parsers.ItemLootParser;
+import Parsers.MillingLootParser;
 import Parsers.SkiningLootParser;
 
 public class WoWHead {
@@ -22,7 +24,13 @@ public class WoWHead {
 	public static void main(String[] args) {
 		if (!InitialParserParams(args))
 			return;
-
+/*		
+		parseType = ParserType.PARSER_MILLING_LOOT;
+		range1 = 109125;
+		range2 = 109126;
+		filename = "item.sql";
+		threadCount = 1;
+*/
 		Parse();
 	}
 	
@@ -91,6 +99,14 @@ public class WoWHead {
 				for (int i = range1; i <= range2; ++i)
 					executor.submit(new ItemLootParser(i));
 				break;
+			case PARSER_CREATES_ITEM:
+				for (int i = range1; i <= range2; ++i)
+					executor.submit(new CreatesItemParser(i));
+				break;
+			case PARSER_MILLING_LOOT:
+				for (int i = range1; i <= range2; ++i)
+					executor.submit(new MillingLootParser(i));
+				break;
 			default:
 				break;
 		}
@@ -107,7 +123,7 @@ public class WoWHead {
 		FileWriter wrt = null;
 		try {
 			wrt = new FileWriter(new File(filename));
-			for (Object l : LootMgr.getInstance().getLoot())
+			for (Object l : ParseDataMgr.getInstance().getData())
 				wrt.write(l.toString() + "\n");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

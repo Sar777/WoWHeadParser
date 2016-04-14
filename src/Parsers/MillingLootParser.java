@@ -6,7 +6,7 @@ import java.net.URL;
 import Loaders.Loader;
 import LootTemplates.Loot;
 import LootTemplates.LootTemplate;
-import LootTemplates.SkinningLoot;
+import LootTemplates.MillingLoot;
 import Managers.ParseDataMgr;
 
 import com.google.gson.JsonArray;
@@ -15,20 +15,20 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-public class SkiningLootParser implements Runnable {
+public class MillingLootParser implements Runnable {
 	int entry;
 
-	public SkiningLootParser(int entry) {
+	public MillingLootParser(int entry) {
 		super();
 		this.entry = entry;
 	}
 
 	@Override
 	public void run() {
-		System.out.println("SkiningLootParser: Parse loot npc for " + entry);
+		System.out.println("MillingLootParser: Parse loot for " + entry);
 		String htmlText = "";
 		try {
-			htmlText = new Loader().LoadHtml(new URL("http://wowhead.com/npc=" + entry));
+			htmlText = new Loader().LoadHtml(new URL("http://wowhead.com/item=" + entry));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
@@ -40,11 +40,11 @@ public class SkiningLootParser implements Runnable {
 		if (titlePos == -1)
 			return;
 		
-		Loot loot = new SkinningLoot(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - NPC -")));
+		Loot loot = new MillingLoot(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - Item -")));
 		
-		int idx = htmlText.indexOf("new Listview({template: 'item', id: 'skinning'");
+		int idx = htmlText.indexOf("new Listview({template: 'item', id: 'milling'");
 		if (idx == -1)
-			return;
+			return;	
 		
 		htmlText = htmlText.substring(idx);
 		idx = htmlText.indexOf("}]});");
@@ -62,7 +62,8 @@ public class SkiningLootParser implements Runnable {
 			JsonParser parser = new JsonParser();
 			items = parser.parse(htmlText).getAsJsonArray();	
 		} catch (JsonSyntaxException e) {
-			System.out.println("SkiningLootParser: Parsing problem npc " + entry);
+			System.out.println("MillingLootParser: Parsing problem item " + entry);
+			System.out.println(e.getMessage());
 			return;
 		}
 		
@@ -77,13 +78,13 @@ public class SkiningLootParser implements Runnable {
 			lItem.setItem(Integer.parseInt(object.get("id").toString()));
 			lItem.setMincount(Integer.parseInt(object.get("stack").getAsJsonArray().get(0).getAsString()));
 			lItem.setMaxcount(Integer.parseInt(object.get("stack").getAsJsonArray().get(1).getAsString()));
-			lItem.setChance(Float.parseFloat(object.get("pctstack") != null ? object.get("pctstack").getAsJsonObject().get("1").getAsString() : "0"));
+			lItem.setChance(0);
 			lItem.setComment(object.get("name").toString().replaceAll("\"", "").substring(1));
 			loot.getLoots().add(lItem);
 		}
-		
+
 		if (loot.getLoots().size() > 0) {
-			ParseDataMgr.getInstance().getData().add(new SkinningLoot(loot));
+			ParseDataMgr.getInstance().getData().add(new MillingLoot(loot));
 		}
 	}
 }

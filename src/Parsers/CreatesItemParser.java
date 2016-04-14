@@ -4,9 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import Loaders.Loader;
-import LootTemplates.ItemLoot;
-import LootTemplates.Loot;
-import LootTemplates.LootTemplate;
+import LootTemplates.CreatesTradeSkill;
 import Managers.ParseDataMgr;
 
 import com.google.gson.JsonArray;
@@ -15,17 +13,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-public class ItemLootParser implements Runnable {
+public class CreatesItemParser implements Runnable {
 	int entry;
 
-	public ItemLootParser(int entry) {
+	public CreatesItemParser(int entry) {
 		super();
 		this.entry = entry;
 	}
 
 	@Override
 	public void run() {
-		System.out.println("ItemLootParser: Parse loot for " + entry);
+		System.out.println("CreatesItemParser: Parse " + entry);
 		String htmlText = "";
 		try {
 			htmlText = new Loader().LoadHtml(new URL("http://wowhead.com/item=" + entry));
@@ -40,9 +38,16 @@ public class ItemLootParser implements Runnable {
 		if (titlePos == -1)
 			return;
 		
-		Loot loot = new ItemLoot(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - Item -")));
+		int spellPos = htmlText.indexOf("Use: <a href=\"/spell=");
+		if (spellPos == -1)
+			return;
 		
-		int idx = htmlText.indexOf("new Listview({template: 'item', id: 'contains'");
+		String temp = htmlText.substring(spellPos, spellPos + 50);
+		entry = Integer.parseInt(temp.substring(21, temp.indexOf("\" class=\"")));
+		
+		CreatesTradeSkill creates = new CreatesTradeSkill(entry, htmlText.substring(titlePos + 7, htmlText.indexOf(" - Item -")));
+		
+		int idx = htmlText.indexOf("new Listview({template: 'item', id: 'creates'");
 		if (idx == -1)
 			return;	
 		
@@ -62,7 +67,7 @@ public class ItemLootParser implements Runnable {
 			JsonParser parser = new JsonParser();
 			items = parser.parse(htmlText).getAsJsonArray();	
 		} catch (JsonSyntaxException e) {
-			System.out.println("ItemLootParser: Parsing problem item " + entry);
+			System.out.println("CreatesItemParser: Parsing problem item " + entry);
 			System.out.println(e.getMessage());
 			return;
 		}
@@ -73,18 +78,11 @@ public class ItemLootParser implements Runnable {
 
 		for (JsonElement el : items) {
 			JsonObject object = el.getAsJsonObject();
-			LootTemplate lItem = new LootTemplate();
-			lItem.setEntry(entry);
-			lItem.setItem(Integer.parseInt(object.get("id").toString()));
-			lItem.setMincount(Integer.parseInt(object.get("stack").getAsJsonArray().get(0).getAsString()));
-			lItem.setMaxcount(Integer.parseInt(object.get("stack").getAsJsonArray().get(1).getAsString()));
-			lItem.setChance(0);
-			lItem.setComment(object.get("name").toString().replaceAll("\"", "").substring(1));
-			loot.getLoots().add(lItem);
+			creates.AddItem(Integer.parseInt(object.get("id").toString()), object.get("name").toString().replaceAll("\"", "").substring(1));
 		}
 		
-		if (loot.getLoots().size() > 0) {
-			ParseDataMgr.getInstance().getData().add(new ItemLoot(loot));
+		if (creates.Size() > 0) {
+			ParseDataMgr.getInstance().getData().add(new CreatesTradeSkill(creates));
 		}
 	}
 }

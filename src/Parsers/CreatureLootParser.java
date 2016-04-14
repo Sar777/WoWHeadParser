@@ -7,7 +7,7 @@ import Loaders.Loader;
 import LootTemplates.CreatureLoot;
 import LootTemplates.Loot;
 import LootTemplates.LootTemplate;
-import Managers.LootMgr;
+import Managers.ParseDataMgr;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -83,7 +83,7 @@ public class CreatureLootParser implements Runnable {
 		}
 		
 		if (loot.getLoots().size() > 0) {
-			LootMgr.getInstance().getLoot().add(new CreatureLoot(loot));
+			ParseDataMgr.getInstance().getData().add(new CreatureLoot(loot));
 		}
 	}
 

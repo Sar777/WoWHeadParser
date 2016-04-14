@@ -7,7 +7,7 @@ import Loaders.Loader;
 import LootTemplates.ItemLoot;
 import LootTemplates.Loot;
 import LootTemplates.LootTemplate;
-import Managers.LootMgr;
+import Managers.ParseDataMgr;
 
 import com.google.gson.*;
 
@@ -79,7 +79,7 @@ public class DisenchantLootParser implements Runnable {
 		}
 		
 		if (loot.getLoots().size() > 0) {
-			LootMgr.getInstance().getLoot().add(new ItemLoot(loot));
+			ParseDataMgr.getInstance().getData().add(new ItemLoot(loot));
 		}
 	}
 }
