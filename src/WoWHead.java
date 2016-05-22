@@ -11,8 +11,10 @@ import Managers.ParseDataMgr;
 import Parsers.CreatesItemParser;
 import Parsers.CreatureLootParser;
 import Parsers.DisenchantLootParser;
+import Parsers.FishingLootParser;
 import Parsers.ItemLootParser;
 import Parsers.MillingLootParser;
+import Parsers.ProfessionUpgradeParser;
 import Parsers.SkiningLootParser;
 
 public class WoWHead {
@@ -22,15 +24,15 @@ public class WoWHead {
 	private static ParserType parseType;
 
 	public static void main(String[] args) {
-		if (!InitialParserParams(args))
-			return;
-/*		
-		parseType = ParserType.PARSER_MILLING_LOOT;
-		range1 = 109125;
-		range2 = 109126;
-		filename = "item.sql";
-		threadCount = 1;
-*/
+		//if (!InitialParserParams(args))
+		//	return;
+
+		parseType = ParserType.PARSER_ITEM_LOOT;
+		range1 = 118529;
+		range2 = 118531;
+		filename = "item1.sql";
+		threadCount = 30;
+
 		Parse();
 	}
 	
@@ -106,6 +108,14 @@ public class WoWHead {
 			case PARSER_MILLING_LOOT:
 				for (int i = range1; i <= range2; ++i)
 					executor.submit(new MillingLootParser(i));
+				break;
+			case PARSER_ITEM_UPGRADES:
+				for (int i = range1; i <= range2; ++i)
+					executor.submit(new ProfessionUpgradeParser(i));
+				break;
+			case PARSER_FISHING_LOOT:
+				for (int i = range1; i <= range2; ++i)
+					executor.submit(new FishingLootParser(i));
 				break;
 			default:
 				break;

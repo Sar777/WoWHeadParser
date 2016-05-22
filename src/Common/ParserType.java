@@ -7,7 +7,9 @@ public enum ParserType {
 	PARSER_CREATURE_LOOT,
 	PARSER_ITEM_LOOT,
 	PARSER_CREATES_ITEM,
-	PARSER_MILLING_LOOT;
+	PARSER_MILLING_LOOT,
+	PARSER_ITEM_UPGRADES,
+	PARSER_FISHING_LOOT;
 	
     public static ParserType fromInteger(int x) {
         switch (x) {
@@ -23,6 +25,10 @@ public enum ParserType {
 	        	return PARSER_CREATES_ITEM;
 	        case 5:
 	        	return PARSER_MILLING_LOOT;
+	        case 6:
+	        	return PARSER_ITEM_UPGRADES;
+	        case 7:
+	        	return PARSER_FISHING_LOOT;
 	        default:
 	        	return PARSER_NONE;
 	     	}
